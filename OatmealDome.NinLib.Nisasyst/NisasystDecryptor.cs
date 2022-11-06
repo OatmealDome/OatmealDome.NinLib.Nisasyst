@@ -1,6 +1,7 @@
 using System.Security.Cryptography;
 using System.Text;
 using Force.Crc32;
+using OatmealDome.BinaryData;
 
 namespace OatmealDome.NinLib.Nisasyst;
 
@@ -62,6 +63,66 @@ public sealed class NisasystDecryptor
 
         // Seek back to the beginning
         outputStream.Seek(0, SeekOrigin.Begin);
+    }
+
+    public static byte[] DecryptThunderBcat(byte[] data, string festResourceId, string fileName, byte[] key)
+    {
+        using MemoryStream inputStream = new MemoryStream(data);
+        using MemoryStream outputStream = new MemoryStream();
+
+        DecryptThunderBcat(inputStream, outputStream, festResourceId, fileName, key);
+
+        return outputStream.ToArray();
+    }
+
+    public static void DecryptThunderBcat(Stream inputStream, Stream outputStream, string festResourceId,
+        string fileName, byte[] key)
+    {
+        using BinaryDataReader inputReader = new BinaryDataReader(inputStream)
+        {
+            ByteOrder = ByteOrder.LittleEndian
+        };
+        
+        inputReader.Seek(0, SeekOrigin.Begin);
+
+        // The first 4 bytes are an int which contain the size of the data. This is necessary to read
+        // because 0x07 padding bytes are placed after the data to round up to the nearest AES block size.
+        int dataSize = inputReader.ReadInt32();
+
+        string nisasystPath;
+        
+        if (fileName == "base")
+        {
+            nisasystPath = $"{festResourceId}.pack.zs";
+        }
+        else
+        {
+            nisasystPath = $"{festResourceId}_{fileName}.pack.zs";
+        }
+
+        uint seed = Crc32Algorithm.Compute(Encoding.ASCII.GetBytes(nisasystPath));
+
+        SeadRandom seadRandom = new SeadRandom(seed);
+        
+        using MemoryStream decryptedStream = new MemoryStream();
+        
+        using (Aes aes = Aes.Create())
+        {
+            aes.Mode = CipherMode.CBC;
+            aes.Key = key;
+            aes.IV = CreateSequence(seadRandom);
+            aes.Padding = PaddingMode.None;
+
+            using (CryptoStream cryptoStream = new CryptoStream(decryptedStream, aes.CreateDecryptor(), CryptoStreamMode.Write, true))
+            {
+                inputStream.CopyTo(cryptoStream);
+            }
+        }
+
+        byte[] decryptedData = decryptedStream.ToArray();
+
+        outputStream.Seek(0, SeekOrigin.Begin);
+        outputStream.Write(decryptedData, 0, dataSize);
     }
 
     public static bool IsNisasystFile(Stream stream)
