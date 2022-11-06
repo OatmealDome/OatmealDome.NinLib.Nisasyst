@@ -121,8 +121,8 @@ public sealed class NisasystDecryptor
 
         byte[] decryptedData = decryptedStream.ToArray();
 
-        outputStream.Seek(0, SeekOrigin.Begin);
         outputStream.Write(decryptedData, 0, dataSize);
+        outputStream.Seek(0, SeekOrigin.Begin);
     }
 
     public static bool IsNisasystFile(Stream stream)
