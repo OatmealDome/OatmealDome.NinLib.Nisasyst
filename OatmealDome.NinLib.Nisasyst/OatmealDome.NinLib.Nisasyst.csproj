@@ -8,7 +8,7 @@
         <PackageId>OatmealDome.NinLib.Nisasyst</PackageId>
         <Version>2.0.0</Version>
         <Authors>OatmealDome</Authors>
-        <Description>An implementation of Splatoon 2's nisasyst encryption in C#.</Description>
+        <Description>An implementation of Splatoon 2's nisasyst encryption and Splatoon 3's nisasyst encryption for BCAT in C#.</Description>
         <RepositoryUrl>https://github.com/OatmealDome/OatmealDome.NinLib.Nisasyst</RepositoryUrl>
         <LangVersion>10</LangVersion>
     </PropertyGroup>
