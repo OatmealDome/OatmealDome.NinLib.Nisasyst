@@ -78,7 +78,7 @@ public sealed class NisasystDecryptor
     public static void DecryptThunderBcat(Stream inputStream, Stream outputStream, string festResourceId,
         string fileName, byte[] key)
     {
-        using BinaryDataReader inputReader = new BinaryDataReader(inputStream)
+        using BinaryDataReader inputReader = new BinaryDataReader(inputStream, true)
         {
             ByteOrder = ByteOrder.LittleEndian
         };
