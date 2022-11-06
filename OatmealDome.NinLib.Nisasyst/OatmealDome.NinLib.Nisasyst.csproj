@@ -10,6 +10,7 @@
         <Authors>OatmealDome</Authors>
         <Description>An implementation of Splatoon 2's nisasyst encryption in C#.</Description>
         <RepositoryUrl>https://github.com/OatmealDome/OatmealDome.NinLib.Nisasyst</RepositoryUrl>
+        <LangVersion>10</LangVersion>
     </PropertyGroup>
 
     <ItemGroup>
